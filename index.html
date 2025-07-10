@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vývoj DIP (Dlouhodobý investiční produkt)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .chart-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vývoj DIP (Dlouhodobý investiční produkt)</h1>
+  <div class="chart-container">
+    <canvas id="accountChart"></canvas>
+    <p><strong>Data k:</strong> 31. 3. 2025</p>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="volumeChart"></canvas>
+    <label for="dateSlider">Zvolte období:</label>
+    <input type="range" id="dateSlider" min="0" max="4" value="4" />
+    <p id="selectedDate">Zvoleno období: 31. 3. 2025</p>
+  </div>
+
+  <script>
+    const dates = [
+      "31. 3. 2024",
+      "30. 6. 2024",
+      "30. 9. 2024",
+      "31. 12. 2024",
+      "31. 3. 2025"
+    ];
+
+    const accounts = [22445, 53561, 78680, 116544, 150936];
+    const volumes = [0.7, 1.4, 2.0, 2.4, 3.5]; // v miliardách Kč
+
+    const accountCtx = document.getElementById("accountChart").getContext("2d");
+    const accountChart = new Chart(accountCtx, {
+      type: "line",
+      data: {
+        labels: dates,
+        datasets: [{
+          label: "Počet DIP účtů",
+          data: accounts,
+          borderColor: "#007bff",
+          backgroundColor: "rgba(0,123,255,0.1)",
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Vývoj počtu DIP účtů v čase' }
+        }
+      }
+    });
+
+    const volumeCtx = document.getElementById("volumeChart").getContext("2d");
+    const volumeChart = new Chart(volumeCtx, {
+      type: "bar",
+      data: {
+        labels: [dates[4]],
+        datasets: [{
+          label: "Objem prostředků (mld. Kč)",
+          data: [volumes[4]],
+          backgroundColor: "#28a745"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Objem prostředků v DIP' }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 0.5 }
+          }
+        }
+      }
+    });
+
+    document.getElementById("dateSlider").addEventListener("input", function(e) {
+      const index = parseInt(e.target.value);
+      volumeChart.data.labels = [dates[index]];
+      volumeChart.data.datasets[0].data = [volumes[index]];
+      document.getElementById("selectedDate").innerText = `Zvoleno období: ${dates[index]}`;
+      volumeChart.update();
+    });
+  </script>
+</body>
+</html>

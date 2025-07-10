@@ -1,1 +1,1 @@
-# DIP-v-voj-na-trhu
+# DIP
